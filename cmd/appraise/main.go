@@ -70,7 +70,7 @@ func main() {
 	if *outputFlag == "-" {
 		fmt.Print(narrative)
 	} else {
-		if err := os.WriteFile(*outputFlag, []byte(narrative), 0o644); err != nil {
+		if err := os.WriteFile(*outputFlag, []byte(narrative), 0o600); err != nil {
 			fmt.Fprintf(os.Stderr, `{"error": %q, "code": 2}`+"\n", err.Error())
 			os.Exit(exit.ToolError)
 		}
