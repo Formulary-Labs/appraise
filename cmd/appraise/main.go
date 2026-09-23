@@ -22,10 +22,11 @@ const version = "0.1.0"
 
 func main() {
 	var (
-		outputFlag  = flag.String("output", "compliance-narrative.md", "Output Markdown path (use - for stdout)")
-		programFlag = flag.String("program", "", "Program slug (for provenance and document header)")
-		dryRunFlag  = flag.Bool("dry-run", false, "Print detected artifact types without writing output")
-		versionFlag = flag.Bool("version", false, "Print version and exit")
+		outputFlag       = flag.String("output", "compliance-narrative.md", "Output Markdown path (use - for stdout)")
+		programFlag      = flag.String("program", "", "Program slug (for provenance and document header)")
+		dryRunFlag       = flag.Bool("dry-run", false, "Print detected artifact types without writing output")
+		warnUnrecognized = flag.Bool("warn-unrecognized", true, "Warn when input files are skipped due to unrecognized or unsupported artifact type (set false to suppress)")
+		versionFlag      = flag.Bool("version", false, "Print version and exit")
 	)
 	flag.Usage = usage
 	flag.Parse()
@@ -47,7 +48,9 @@ func main() {
 	for _, path := range paths {
 		inp, err := resolveArtifact(path)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "warning: skipping %s: %v\n", path, err)
+			if *warnUnrecognized {
+				fmt.Fprintf(os.Stderr, "warning: skipping %s: %v\n", path, err)
+			}
 			continue
 		}
 		inputs = append(inputs, inp)
@@ -165,10 +168,11 @@ Usage:
   appraise [flags] <artifact1.yaml> [artifact2.yaml] ...
 
 Flags:
-  --output string    Output Markdown path (default: compliance-narrative.md; use - for stdout)
-  --program string   Program slug for document header and provenance (optional)
-  --dry-run          Print detected artifact types without writing output
-  --version          Print version and exit
+  --output string         Output Markdown path (default: compliance-narrative.md; use - for stdout)
+  --program string        Program slug for document header and provenance (optional)
+  --dry-run               Print detected artifact types without writing output
+  --warn-unrecognized     Warn when files are skipped due to unsupported artifact type (default: true)
+  --version               Print version and exit
 
 Supported artifact types:
   ControlCatalog · GuidanceCatalog · EvaluationLog · AuditLog
