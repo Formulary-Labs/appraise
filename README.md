@@ -1,10 +1,19 @@
 # appraise
 
-Framework-agnostic compliance narrative generator from gemara artifacts.
+Framework-agnostic compliance narrative generator from OSCAL catalogs and gemara artifacts.
+
+## In the ecosystem
+
+Formulary is a **pick-and-choose** suite of small, single-purpose CLIs. Install only the tools your workflow needs; each runs standalone. Shared contracts live in [`substrate`](https://github.com/Formulary-Labs/substrate). Optional Make pipelines (or an agent such as `regimen`) compose tools into a run — plug-and-play, not all-or-nothing.
+
+**This tool:** auditor narrative from OSCAL catalogs and gemara artifacts (may inline risk/eval).  
+**Works with:** `compound` (plan, cite-only packet), `formula` / `specimen` (packet sources).  
+**Pipeline stage:** assess / present.
+
 
 ## Overview
 
-`appraise` accepts any number of gemara artifact files, auto-detects each artifact's type, and produces a compliance narrative Markdown document. Each section documents its data source. Sections requiring AI judgment carry `[DATA NEEDED]` placeholders.
+`appraise` accepts any number of artifact files, auto-detects OSCAL catalogs and gemara types, and produces a compliance narrative Markdown document. Each section documents its data source. Sections requiring AI judgment carry `[DATA NEEDED]` placeholders. OSCAL models other than `catalog` are skipped.
 
 `appraise` is composable: pass a single `ControlCatalog` for a minimal narrative, or pass a full set of artifacts for a richer document.
 
@@ -14,10 +23,11 @@ Framework-agnostic compliance narrative generator from gemara artifacts.
 appraise [flags] <artifact1.yaml> [artifact2.yaml] ...
 
 Flags:
-  --output string    Output Markdown path (default: compliance-narrative.md)
-  --program string   Program slug for document header and provenance
-  --dry-run          Print detected artifact types without writing output
-  --version          Print version and exit
+  --output string            Output Markdown path (default: compliance-narrative.md; use - for stdout)
+  --program string           Program slug for document header and provenance
+  --warn-unrecognized bool   Warn when input files are skipped for unrecognized types (default true; set false to suppress)
+  --dry-run                  Print detected artifact types without writing output
+  --version                  Print version and exit
 ```
 
 ## Supported Artifact Types
